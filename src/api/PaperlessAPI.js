@@ -147,7 +147,29 @@ export class PaperlessAPI {
 
   // Tag operations
   async getTags() {
-    return this.request('/tags/')
+    // Implement pagination to fetch all tags
+    let allTags = [];
+    let page = 1;
+    let hasMorePages = true;
+    
+    while (hasMorePages) {
+      const response = await this.request(`/tags/?page=${page}&page_size=100`);
+      
+      if (response.results && response.results.length > 0) {
+        allTags = [...allTags, ...response.results];
+        
+        // Check if there are more pages
+        if (response.next) {
+          page++;
+        } else {
+          hasMorePages = false;
+        }
+      } else {
+        hasMorePages = false;
+      }
+    }
+    
+    return { count: allTags.length, results: allTags };
   }
 
   async createTag(data) {
