@@ -91,7 +91,37 @@ export class PaperlessAPI {
   }
 
   async getDocuments(query = '') {
-    return this.request(`/documents/${query}`)
+    // Build the base URL with the query
+    const baseQueryUrl = query ? `/documents/${query}` : '/documents/';
+    
+    // Parse the query to see if it already contains pagination parameters
+    const hasExistingParams = query.includes('?');
+    const pageParamPrefix = hasExistingParams ? '&' : '?';
+    
+    // Implement pagination to fetch all documents
+    let allDocuments = [];
+    let page = 1;
+    let hasMorePages = true;
+    
+    while (hasMorePages) {
+      const paginatedUrl = `${baseQueryUrl}${pageParamPrefix}page=${page}&page_size=100`;
+      const response = await this.request(paginatedUrl);
+      
+      if (response.results && response.results.length > 0) {
+        allDocuments = [...allDocuments, ...response.results];
+        
+        // Check if there are more pages
+        if (response.next) {
+          page++;
+        } else {
+          hasMorePages = false;
+        }
+      } else {
+        hasMorePages = false;
+      }
+    }
+    
+    return { count: allDocuments.length, results: allDocuments };
   }
 
   async getDocument(id) {
@@ -142,7 +172,29 @@ export class PaperlessAPI {
 
   // Correspondent operations
   async getCorrespondents() {
-    return this.request('/correspondents/')
+    // Implement pagination to fetch all correspondents
+    let allCorrespondents = [];
+    let page = 1;
+    let hasMorePages = true;
+    
+    while (hasMorePages) {
+      const response = await this.request(`/correspondents/?page=${page}&page_size=100`);
+      
+      if (response.results && response.results.length > 0) {
+        allCorrespondents = [...allCorrespondents, ...response.results];
+        
+        // Check if there are more pages
+        if (response.next) {
+          page++;
+        } else {
+          hasMorePages = false;
+        }
+      } else {
+        hasMorePages = false;
+      }
+    }
+    
+    return { count: allCorrespondents.length, results: allCorrespondents };
   }
 
   async createCorrespondent(data) {
@@ -154,7 +206,29 @@ export class PaperlessAPI {
 
   // Document type operations
   async getDocumentTypes() {
-    return this.request('/document_types/')
+    // Implement pagination to fetch all document types
+    let allDocumentTypes = [];
+    let page = 1;
+    let hasMorePages = true;
+    
+    while (hasMorePages) {
+      const response = await this.request(`/document_types/?page=${page}&page_size=100`);
+      
+      if (response.results && response.results.length > 0) {
+        allDocumentTypes = [...allDocumentTypes, ...response.results];
+        
+        // Check if there are more pages
+        if (response.next) {
+          page++;
+        } else {
+          hasMorePages = false;
+        }
+      } else {
+        hasMorePages = false;
+      }
+    }
+    
+    return { count: allDocumentTypes.length, results: allDocumentTypes };
   }
 
   async createDocumentType(data) {
