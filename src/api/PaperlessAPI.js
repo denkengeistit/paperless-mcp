@@ -3,6 +3,19 @@ export class PaperlessAPI {
     this.baseUrl = baseUrl
     this.token = token
   }
+  
+  // Helper method to filter object fields
+  _filterObjectFields(obj, fields) {
+    if (!fields || !fields.length) return obj;
+    
+    const filteredObj = {};
+    fields.forEach(field => {
+      if (obj.hasOwnProperty(field)) {
+        filteredObj[field] = obj[field];
+      }
+    });
+    return filteredObj;
+  }
 
   async request(path, options = {}) {
     const url = `${this.baseUrl}/api${path}`
@@ -90,7 +103,7 @@ export class PaperlessAPI {
     return response.json()
   }
 
-  async getDocuments(query = '') {
+  async getDocuments(query = '', fields = null) {
     // Build the base URL with the query
     const baseQueryUrl = query ? `/documents/${query}` : '/documents/';
     
@@ -108,7 +121,12 @@ export class PaperlessAPI {
       const response = await this.request(paginatedUrl);
       
       if (response.results && response.results.length > 0) {
-        allDocuments = [...allDocuments, ...response.results];
+        // Filter fields if specified
+        const filteredResults = fields 
+          ? response.results.map(doc => this._filterObjectFields(doc, fields))
+          : response.results;
+          
+        allDocuments = [...allDocuments, ...filteredResults];
         
         // Check if there are more pages
         if (response.next) {
@@ -146,7 +164,7 @@ export class PaperlessAPI {
   }
 
   // Tag operations
-  async getTags() {
+  async getTags(fields = null) {
     // Implement pagination to fetch all tags
     let allTags = [];
     let page = 1;
@@ -156,7 +174,12 @@ export class PaperlessAPI {
       const response = await this.request(`/tags/?page=${page}&page_size=100`);
       
       if (response.results && response.results.length > 0) {
-        allTags = [...allTags, ...response.results];
+        // Filter fields if specified
+        const filteredResults = fields 
+          ? response.results.map(tag => this._filterObjectFields(tag, fields))
+          : response.results;
+          
+        allTags = [...allTags, ...filteredResults];
         
         // Check if there are more pages
         if (response.next) {
@@ -193,7 +216,7 @@ export class PaperlessAPI {
   }
 
   // Correspondent operations
-  async getCorrespondents() {
+  async getCorrespondents(fields = null) {
     // Implement pagination to fetch all correspondents
     let allCorrespondents = [];
     let page = 1;
@@ -203,7 +226,12 @@ export class PaperlessAPI {
       const response = await this.request(`/correspondents/?page=${page}&page_size=100`);
       
       if (response.results && response.results.length > 0) {
-        allCorrespondents = [...allCorrespondents, ...response.results];
+        // Filter fields if specified
+        const filteredResults = fields 
+          ? response.results.map(correspondent => this._filterObjectFields(correspondent, fields))
+          : response.results;
+          
+        allCorrespondents = [...allCorrespondents, ...filteredResults];
         
         // Check if there are more pages
         if (response.next) {
@@ -227,7 +255,7 @@ export class PaperlessAPI {
   }
 
   // Document type operations
-  async getDocumentTypes() {
+  async getDocumentTypes(fields = null) {
     // Implement pagination to fetch all document types
     let allDocumentTypes = [];
     let page = 1;
@@ -237,7 +265,12 @@ export class PaperlessAPI {
       const response = await this.request(`/document_types/?page=${page}&page_size=100`);
       
       if (response.results && response.results.length > 0) {
-        allDocumentTypes = [...allDocumentTypes, ...response.results];
+        // Filter fields if specified
+        const filteredResults = fields 
+          ? response.results.map(docType => this._filterObjectFields(docType, fields))
+          : response.results;
+          
+        allDocumentTypes = [...allDocumentTypes, ...filteredResults];
         
         // Check if there are more pages
         if (response.next) {
