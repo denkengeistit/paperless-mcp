@@ -21,7 +21,7 @@ if (!baseUrl || !token) {
 const api = new PaperlessAPI(baseUrl, token)
 
 // Initialize server
-const server = new LiteMCP('paperless-ngx', '1.0.0')
+const server = new LiteMCP('paperless-ngx', '1.1.1')
 
 // Register all tools
 registerDocumentTools(server, api)
@@ -31,3 +31,6 @@ registerDocumentTypeTools(server, api)
 
 // Start server
 server.start()
+
+
+//this is a test
