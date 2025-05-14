@@ -7,7 +7,8 @@ export function registerDocumentTypeTools(server, api) {
     parameters: z.object({}),
     execute: async () => {
       if (!api) throw new Error('Please configure API connection first')
-      return api.getDocumentTypes()
+      // Only return essential fields to reduce token usage
+      return api.getDocumentTypes(['id', 'name', 'document_count'])
     }
   })
 

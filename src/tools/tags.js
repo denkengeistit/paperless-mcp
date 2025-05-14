@@ -7,7 +7,8 @@ export function registerTagTools(server, api) {
     parameters: z.object({}),
     execute: async () => {
       if (!api) throw new Error('Please configure API connection first')
-      return api.getTags()
+      // Only return essential fields to reduce token usage
+      return api.getTags(['id', 'name', 'document_count'])
     }
   })
 

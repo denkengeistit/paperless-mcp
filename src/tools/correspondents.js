@@ -7,7 +7,8 @@ export function registerCorrespondentTools(server, api) {
     parameters: z.object({}),
     execute: async () => {
       if (!api) throw new Error('Please configure API connection first')
-      return api.getCorrespondents()
+      // Only return essential fields to reduce token usage
+      return api.getCorrespondents(['id', 'name', 'document_count'])
     }
   })
 

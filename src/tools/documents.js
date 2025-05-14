@@ -94,7 +94,11 @@ export function registerDocumentTools(server, api) {
       const query = new URLSearchParams()
       if (args.page) query.set('page', args.page)
       if (args.page_size) query.set('page_size', args.page_size)
-      return api.getDocuments(query.toString() ? `?${query.toString()}` : '')
+      // Only return essential fields to reduce token usage
+      return api.getDocuments(
+        query.toString() ? `?${query.toString()}` : '',
+        ['id', 'title', 'correspondent', 'document_type', 'created', 'added', 'tags', 'archive_serial_number']
+      )
     }
   })
 
