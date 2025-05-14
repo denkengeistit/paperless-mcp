@@ -333,3 +333,30 @@ The server is built with:
 ## API Documentation
 
 This MCP server implements endpoints from the Paperless-NGX REST API. For more details about the underlying API, see the [official documentation](https://docs.paperless-ngx.com/api/).
+
+## Field Filtering
+
+As of version 1.1.0, all collection methods (`getTags`, `getDocuments`, `getCorrespondents`, `getDocumentTypes`) support field filtering to reduce token usage. This is particularly useful for the MCP server where response size directly impacts token consumption.
+
+### How It Works
+
+You can specify which fields to include in the response by passing an array of field names to any of the collection methods:
+
+```javascript
+// Get only id, name, and document_count for tags
+const tags = await api.getTags(['id', 'name', 'document_count']);
+
+// Get only id, title, and created date for documents
+const documents = await api.getDocuments('', ['id', 'title', 'created']);
+
+// Get only id and name for correspondents
+const correspondents = await api.getCorrespondents(['id', 'name']);
+```
+
+### Benefits
+
+- **Reduced Response Size**: Field filtering can reduce response payload size by up to 75% or more
+- **Lower Token Usage**: Smaller responses mean fewer tokens consumed when processing through LLMs
+- **Faster Processing**: Only the essential data is transferred and processed
+
+When implementing MCP tools, consider using field filtering for all list operations to optimize token usage.
